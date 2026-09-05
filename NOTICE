@@ -1,0 +1,7 @@
+Juniper Router is a Cinqic project. The repository source is available under
+the Apache License 2.0 in LICENSE.
+
+SmolLM2-135M Base is an upstream model from HuggingFaceTB. Its separate
+license, notices, immutable revision, and file hashes are recorded in
+manifests/base-model.json after acquisition; the repository does not bundle
+model weights.

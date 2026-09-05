@@ -1,0 +1,2 @@
+phase,date,engineering_hours,self_review_hours,independent_review_hours,active_human_hours,gpu_hours,cpu_data_processing_hours,outcome,notes
+phase-0,2026-09-05,PENDING,PENDING,PENDING,PENDING,0,PENDING,active,Exact active time and energy are not observable.

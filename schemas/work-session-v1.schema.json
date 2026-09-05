@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_id", "phase_id", "activity_type", "actor_role", "actor_id", "machine_id", "os_backend", "start_utc", "end_utc", "elapsed_seconds", "evidence_type", "related_ids", "status", "notes"],
+  "properties": {"record_id": {"type": "string"}, "phase_id": {"type": "string"}, "activity_type": {"type": "string"}, "actor_role": {"type": "string"}, "actor_id": {"type": "string"}, "machine_id": {"type": "string"}, "os_backend": {"type": "string"}, "start_utc": {"type": "string", "format": "date-time"}, "end_utc": {"type": ["string", "null"], "format": "date-time"}, "elapsed_seconds": {"type": ["number", "null"], "minimum": 0}, "evidence_type": {"enum": ["automatic", "manual", "estimated", "unavailable"]}, "related_ids": {"type": "array", "items": {"type": "string"}}, "status": {"type": "string"}, "notes": {"type": "string"}}
+}

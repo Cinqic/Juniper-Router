@@ -1,0 +1,11 @@
+{
+  "cmake": null,
+  "generated_utc": "2026-09-05T15:06:35.184591+00:00",
+  "git": "git version 2.53.0.windows.3",
+  "machine": "AMD64",
+  "ninja": null,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "status": "tested",
+  "vulkaninfo": "C:\\WINDOWS\\system32\\vulkaninfo.EXE"
+}

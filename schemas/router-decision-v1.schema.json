@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Cinqic/Juniper-Router/schemas/router-decision-v1.schema.json",
+  "title": "Juniper Router decision v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision", "status", "target_id", "arguments", "message", "reason_code", "confidence"],
+  "properties": {
+    "schema_version": {"const": "juniper-router-decision-v1"},
+    "decision": {"enum": ["answer_directly", "use_tool", "delegate_model", "delegate_agent", "delegate_subagent", "escalate", "clarify", "refuse", "retry", "wait", "continue_orchestration", "complete"]},
+    "status": {"enum": ["ok", "insufficient_context", "capability_exceeded", "unknown", "error"]},
+    "target_id": {"type": ["string", "null"], "maxLength": 128},
+    "arguments": {"type": ["object", "null"], "maxProperties": 32},
+    "message": {"type": ["string", "null"], "maxLength": 8000},
+    "reason_code": {"enum": ["direct_answer_within_capability", "deterministic_tool_more_accurate", "fresh_information_required", "missing_required_argument", "ambiguous_target", "insufficient_context", "capability_unknown", "capability_exceeded", "risk_requires_escalation", "permission_denied", "privacy_conflict", "budget_exhausted", "malformed_or_untrusted_result", "transient_failure", "terminal_failure", "user_cancelled", "successful_completion", "unsupported_schema_version", "unknown_target"]},
+    "confidence": {"enum": ["high", "medium", "low"]}
+  }
+}

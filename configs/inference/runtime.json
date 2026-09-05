@@ -1,0 +1,9 @@
+{
+  "schema_version": "juniper-router-policy-v1",
+  "max_rounds": 4,
+  "max_steps": 8,
+  "max_retries": 2,
+  "max_payload_chars": 64000,
+  "network_allowed": false,
+  "audit_enabled": false
+}

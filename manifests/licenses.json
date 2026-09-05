@@ -1,0 +1,21 @@
+{
+  "manifest_version": "juniper-router-license-manifest-v1",
+  "status": "tested",
+  "repository_license": "Apache-2.0",
+  "sources": [
+    {
+      "id": "juniper-router-source",
+      "name": "Juniper Router source and reviewed seed data",
+      "license": "Apache-2.0",
+      "provenance": "Cinqic user-provided specification and implementation"
+    },
+    {
+      "id": "smollm2-135m",
+      "name": "HuggingFaceTB/SmolLM2-135M Base",
+      "license": "Apache-2.0",
+      "provenance": "Pinned Hugging Face revision in manifests/base-model.json",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M"
+    }
+  ],
+  "policy": "Do not add external data, model weights, or generated artifacts without recording source, revision, license, and hash."
+}

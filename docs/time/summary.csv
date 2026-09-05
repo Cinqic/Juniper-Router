@@ -1,0 +1,2 @@
+actor_id,actor_role,phase_id,activity_type,machine_id,status,elapsed_seconds,evidence_type
+luna,primary-engineer,phase-0,research,spend,open,,unavailable

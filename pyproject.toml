@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "juniper-router"
+version = "0.1.0"
+description = "A local-first, host-validated router built from SmolLM2-135M Base."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.8"]
+model = [
+  "huggingface-hub>=0.28",
+  "safetensors>=0.5",
+  "tokenizers>=0.21",
+  "torch>=2.5",
+  "transformers>=4.48",
+]
+
+[project.scripts]
+juniper-router = "juniper_router.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

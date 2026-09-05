@@ -1,0 +1,9 @@
+{
+  "schema_version": "juniper-router-registry-v1",
+  "targets": [
+    {"target_id":"calculator.evaluate","target_type":"tool","capability":"supported","accepts":["use_tool"],"argument_schema":{"type":"object","properties":{"expression":{"type":"string","maxLength":256}},"required":["expression"],"additionalProperties":false},"requires_confirmation":true,"locality":"local"},
+    {"target_id":"search.query","target_type":"tool","capability":"supported","accepts":["use_tool"],"argument_schema":{"type":"object","properties":{"query":{"type":"string","maxLength":512}},"required":["query"],"additionalProperties":false},"requires_confirmation":true,"locality":"remote"},
+    {"target_id":"coding.specialist","target_type":"model","capability":"supported","accepts":["delegate_model"],"argument_schema":{"type":"object","properties":{"task":{"type":"string","maxLength":2000}},"required":["task"],"additionalProperties":false},"requires_confirmation":true,"locality":"local"},
+    {"target_id":"strong.reasoner","target_type":"model","capability":"supported","accepts":["delegate_model"],"argument_schema":{"type":"object","properties":{"task":{"type":"string","maxLength":2000}},"required":["task"],"additionalProperties":false},"requires_confirmation":true,"locality":"remote"}
+  ]
+}

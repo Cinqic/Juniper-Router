@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: Juniper Router
+message: "Cite the exact candidate commit and artifact manifest when using this research."
+type: software
+authors:
+  - family-names: Cinqic
+repository-code: https://github.com/Cinqic/Juniper-Router
+license: Apache-2.0
+version: 0.1.0

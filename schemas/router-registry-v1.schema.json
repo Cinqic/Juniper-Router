@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Cinqic/Juniper-Router/schemas/router-registry-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "targets"],
+  "properties": {
+    "schema_version": {"const": "juniper-router-registry-v1"},
+    "targets": {"type": "array", "maxItems": 128, "items": {"type": "object", "additionalProperties": false, "required": ["target_id", "target_type", "capability", "accepts", "argument_schema", "requires_confirmation", "locality"], "properties": {"target_id": {"type": "string", "minLength": 1, "maxLength": 128}, "target_type": {"type": "string", "enum": ["tool", "model", "agent", "subagent"]}, "capability": {"enum": ["supported", "unsupported", "unknown"]}, "accepts": {"type": "array", "items": {"type": "string"}}, "argument_schema": {"type": "object"}, "requires_confirmation": {"type": "boolean"}, "locality": {"type": "string", "enum": ["local", "remote", "unknown"]}}}}
+  }
+}

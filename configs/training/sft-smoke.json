@@ -1,0 +1,12 @@
+{
+  "method": "sft",
+  "base_model": "HuggingFaceTB/SmolLM2-135M@93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "renderer": "chatml-v1",
+  "sequence_length": 512,
+  "learning_rate": 0.00002,
+  "batch_size": 1,
+  "gradient_accumulation_steps": 1,
+  "max_steps": 2,
+  "seed": 42,
+  "selection_status": "smoke-only-not-a-candidate"
+}

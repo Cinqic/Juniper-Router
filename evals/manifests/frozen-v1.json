@@ -1,0 +1,10 @@
+{
+  "dataset_path": "evals/frozen/router-eval-v1.jsonl",
+  "examples": 12,
+  "manifest_version": "juniper-router-eval-manifest-v1",
+  "renderer_version": "chatml-v1",
+  "seed": 42,
+  "sha256": "ffaba2cc2f59b6b6e9913597c144b9812ec5aac4073e66c7593ad799e29b40cf",
+  "split": "test",
+  "status": "frozen"
+}

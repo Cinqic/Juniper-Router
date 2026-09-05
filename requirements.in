@@ -1,0 +1,3 @@
+# Canonical runtime is standard-library-only. Optional model dependencies are
+# installed from requirements-model.in when training or Transformers inference
+# is explicitly requested.

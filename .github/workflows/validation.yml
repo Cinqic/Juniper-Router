@@ -1,0 +1,23 @@
+name: validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  canonical:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install development environment
+        run: python -m pip install -e ".[dev]"
+      - name: Canonical validation
+        env:
+          PYTHONPATH: src
+        run: python scripts/validate_repo.py --all

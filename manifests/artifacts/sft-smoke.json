@@ -1,0 +1,35 @@
+{
+  "manifest_version": "juniper-router-artifact-manifest-v1",
+  "artifact_id": "sft-smoke-20260905",
+  "status": "smoke-only-not-a-candidate",
+  "base_model": "HuggingFaceTB/SmolLM2-135M@93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "dataset": "data/generated/juniper-router-dataset-v1.jsonl",
+  "dataset_sha256": "cbf2b0f59fa9034f320070c1d376e13c8f774f717f52c01871f2b51aa49fa097",
+  "eval_manifest": "evals/manifests/frozen-v1.json",
+  "eval_sha256": "ffaba2cc2f59b6b6e9913597c144b9812ec5aac4073e66c7593ad799e29b40cf",
+  "training_config": "configs/training/sft-smoke.json",
+  "machine": "Windows/native CPU",
+  "steps": 2,
+  "elapsed_seconds": 61.53100000001723,
+  "files": [
+    {
+      "path": "checkpoint-2.pt",
+      "sha256": "b5b3ad21b4db8b48344962b5458afb20d18e58142216b8abd40180818889bbcb",
+      "storage": "external checkpoint cache"
+    },
+    {
+      "path": "model/model.safetensors",
+      "sha256": "21a3c0412cbd0d78a7f329a8c0f0599f9cb01a6b97a22c4555ef15c7c1eeb612",
+      "storage": "external checkpoint cache"
+    }
+  ],
+  "evaluation": {
+    "examples": 12,
+    "raw_syntactic_validity": 0.0,
+    "decision_accuracy": 0.0,
+    "target_accuracy": 0.0,
+    "macro_f1": 0.0,
+    "semantic_validator_pass": 0.0
+  },
+  "promotion": "blocked: zero valid structured decisions; independent review and release gates not attempted"
+}

@@ -1,0 +1,28 @@
+{
+  "manifest_version": "juniper-router-source-manifest-v1",
+  "status": "tested",
+  "primary_sources": [
+    {
+      "id": "base-model",
+      "kind": "model",
+      "name": "HuggingFaceTB/SmolLM2-135M",
+      "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+      "manifest": "manifests/base-model.json"
+    },
+    {
+      "id": "router-spec",
+      "kind": "requirements",
+      "name": "User-provided Juniper Router specification",
+      "revision": "user-spec-v1",
+      "manifest": "docs/research/research-ledger.md"
+    }
+  ],
+  "related_repositories": {
+    "Juniper-Auto": "2c0bb824b62f07dc4951ab4e835ce97a350c5233",
+    "cinqic.com": "de644adf25e97f77e263dfd0792f2bdf8d9fa597",
+    "juniper-math-1": "15f499f409bd4a1fc6239c7df8c6fa20db92da18",
+    "Juniper-App": "2f00abba01e0ef956f86859fdef914a9fe8508f5",
+    "Cinqic-Notes": "176ead59a83cdef395f2b34fc8568a9bf9cf572c",
+    "Cinqic-Calculator": "8024cf107d6240386fa42b6c5193dd8b34848032"
+  }
+}

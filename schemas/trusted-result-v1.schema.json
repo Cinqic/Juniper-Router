@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Cinqic/Juniper-Router/schemas/trusted-result-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "target_id", "success", "payload", "host_authored", "provenance"],
+  "properties": {"schema_version": {"const": "juniper-router-trusted-result-v1"}, "result_id": {"type": "string", "minLength": 1}, "target_id": {"type": "string", "minLength": 1}, "success": {"type": "boolean"}, "payload": {"type": "object", "maxProperties": 64}, "host_authored": {"const": true}, "provenance": {"const": "host"}}
+}
