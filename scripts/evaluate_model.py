@@ -71,49 +71,66 @@ def main() -> int:
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--prompt-mode", choices=("full", "compact"), default="compact")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--batch-size", type=int, default=1)
     args = parser.parse_args()
+    if args.batch_size < 1:
+        parser.error("--batch-size must be positive")
     torch, tokenizer, model = _load_model(args.model, args.adapter)
+    tokenizer.padding_side = "left"
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
     rows = load_jsonl(args.eval)
     if args.limit is not None:
         rows = rows[: args.limit]
     predictions = []
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with torch.no_grad(), args.output.open("w", encoding="utf-8", newline="\n") as handle:
-        for row in rows:
-            prompt = render_router_prompt(
-                row["messages"][0]["content"],
-                registry=row["registry"],
-                policy=row["policy"],
-                trusted_result=row["policy"].get("trusted_result"),
-                compact=args.prompt_mode == "compact",
+        for offset in range(0, len(rows), args.batch_size):
+            batch = rows[offset : offset + args.batch_size]
+            prompts = [
+                render_router_prompt(
+                    row["messages"][0]["content"],
+                    registry=row["registry"],
+                    policy=row["policy"],
+                    trusted_result=row["policy"].get("trusted_result"),
+                    compact=args.prompt_mode == "compact",
+                )
+                for row in batch
+            ]
+            encoded = tokenizer(
+                prompts,
+                return_tensors="pt",
+                padding=True,
+                add_special_tokens=False,
             )
-            encoded = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
             generated = model.generate(
                 **encoded,
                 do_sample=False,
                 max_new_tokens=args.max_new_tokens,
                 pad_token_id=tokenizer.eos_token_id,
             )
-            raw = tokenizer.decode(
-                generated[0][encoded["input_ids"].shape[1] :], skip_special_tokens=False
-            )
-            payload = _extract_object(raw)
-            prediction = None
-            if payload is not None:
-                try:
-                    prediction = Decision.from_dict(payload).to_dict()
-                except (TypeError, ValueError):
-                    prediction = None
-            output = {
-                "example_id": row["example_id"],
-                "expected_decision": row["expected_decision"],
-                "registry": row["registry"],
-                "policy": row["policy"],
-                "prediction": prediction,
-                "raw_output": raw,
-            }
-            predictions.append(output)
-            handle.write(json.dumps(output, ensure_ascii=False, sort_keys=True) + "\n")
+            prompt_width = encoded["input_ids"].shape[1]
+            for row, generated_row in zip(batch, generated):
+                raw = tokenizer.decode(
+                    generated_row[prompt_width:], skip_special_tokens=False
+                )
+                payload = _extract_object(raw)
+                prediction = None
+                if payload is not None:
+                    try:
+                        prediction = Decision.from_dict(payload).to_dict()
+                    except (TypeError, ValueError):
+                        prediction = None
+                output = {
+                    "example_id": row["example_id"],
+                    "expected_decision": row["expected_decision"],
+                    "registry": row["registry"],
+                    "policy": row["policy"],
+                    "prediction": prediction,
+                    "raw_output": raw,
+                }
+                predictions.append(output)
+                handle.write(json.dumps(output, ensure_ascii=False, sort_keys=True) + "\n")
     metrics = evaluate_predictions(predictions)
     metrics_path = args.output.with_suffix(".metrics.json")
     metrics_path.write_text(json.dumps(metrics, indent=2, sort_keys=True) + "\n", encoding="utf-8")
