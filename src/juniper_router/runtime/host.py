@@ -86,6 +86,7 @@ class HostOrchestrator:
         executor: Executor,
         confirmed_targets: frozenset[str] = frozenset(),
         dry_run: bool = False,
+        cancelled: Callable[[], bool] | None = None,
     ) -> OrchestrationOutcome:
         messages = [{"role": "user", "content": user_text, "trust": "untrusted_user"}]
         trusted: TrustedResult | None = None
@@ -93,8 +94,19 @@ class HostOrchestrator:
         errors: list[str] = []
         retries = 0
         for round_number in range(policy.max_rounds):
-            decision = provider(messages, trusted)
+            if cancelled is not None and cancelled():
+                errors.append("request cancelled")
+                self.audit.append({"event": "orchestration_cancelled"})
+                return OrchestrationOutcome(None, results, errors, len(results))
             try:
+                decision = provider(messages, trusted)
+            except Exception as exc:
+                errors.append(f"provider returned an invalid decision: {exc}")
+                self.audit.append({"event": "decision_rejected", "error": errors[-1]})
+                return OrchestrationOutcome(None, results, errors, len(results))
+            try:
+                if not isinstance(decision, Decision):
+                    raise DecisionValidationError("provider must return a Decision")
                 checked = self.validator.validate(
                     decision,
                     ValidationContext(
@@ -104,7 +116,7 @@ class HostOrchestrator:
                         step_number=len(results),
                         retry_count=retries,
                         confirmed_targets=confirmed_targets,
-                        trusted_result=trusted.to_dict() if trusted else None,
+                        trusted_result=trusted,
                     ),
                 )
             except (DecisionValidationError, ValueError) as exc:
@@ -127,7 +139,20 @@ class HostOrchestrator:
                 if dry_run:
                     return OrchestrationOutcome(checked, results, errors, len(results))
                 assert checked.target_id is not None and checked.arguments is not None
-                trusted = executor.execute(checked.target_id, checked.arguments)
+                try:
+                    trusted = executor.execute(checked.target_id, checked.arguments)
+                    if not isinstance(trusted, TrustedResult):
+                        raise DecisionValidationError(
+                            "executor returned an invalid trusted result"
+                        )
+                    if trusted.target_id != checked.target_id:
+                        raise DecisionValidationError(
+                            "executor result target does not match request"
+                        )
+                except Exception as exc:
+                    errors.append(str(exc))
+                    self.audit.append({"event": "result_rejected", "error": str(exc)})
+                    return OrchestrationOutcome(None, results, errors, len(results))
                 results.append(trusted)
                 messages.append(
                     {"role": "tool_result", "content": trusted.to_dict(), "trust": "trusted_host"}

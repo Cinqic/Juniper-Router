@@ -1,0 +1,20 @@
+{
+  "method": "lora-sft",
+  "base_model": "HuggingFaceTB/SmolLM2-135M@93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "dataset": "data/generated/juniper-router-dataset-v2.jsonl",
+  "dataset_version": "juniper-router-dataset-v2",
+  "renderer": "chatml-router-compact-v1",
+  "sequence_length": 512,
+  "learning_rate": 0.0002,
+  "batch_size": 1,
+  "gradient_accumulation_steps": 1,
+  "max_steps": 30,
+  "save_every": 10,
+  "eval_every": 10,
+  "eval_limit": 8,
+  "lora_r": 8,
+  "lora_alpha": 16,
+  "lora_dropout": 0.05,
+  "seed": 42,
+  "status": "pilot-in-progress"
+}

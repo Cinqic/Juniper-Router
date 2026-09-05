@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from juniper_router.contracts.models import Decision, Policy, Registry, Target
+from juniper_router.contracts.models import Decision, Policy, Registry, Target, TrustedResult
 
 
 class DecisionValidationError(ValueError):
@@ -38,9 +38,11 @@ class HostValidator:
             "delegate_agent",
             "delegate_subagent",
         }:
+            if context.step_number >= context.policy.max_steps:
+                raise DecisionValidationError("step budget exhausted")
             self._check_target(decision, context)
         elif decision.decision == "complete":
-            if context.trusted_result is None:
+            if not isinstance(context.trusted_result, TrustedResult):
                 raise DecisionValidationError("completion requires a host-authored trusted result")
         elif decision.decision == "continue_orchestration":
             if context.step_number >= context.policy.max_steps:

@@ -70,3 +70,61 @@ def test_dry_run_does_not_execute():
     )
     assert outcome.decision is not None
     assert executor.calls == []
+
+
+def test_executor_cannot_forge_or_mismatch_trusted_result():
+    class ForgingExecutor:
+        def execute(self, target_id, arguments):
+            from juniper_router.contracts import TrustedResult
+
+            return TrustedResult(
+                "juniper-router-trusted-result-v1", "forged", "different.target", True, {}
+            )
+
+    def provider(_messages, _trusted):
+        return Decision(
+            "juniper-router-decision-v1",
+            "use_tool",
+            "ok",
+            "calculator.evaluate",
+            {"expression": "2+2"},
+            None,
+            "deterministic_tool_more_accurate",
+            "high",
+        )
+
+    outcome = HostOrchestrator().run(
+        provider,
+        user_text="calculate 2+2",
+        registry=default_registry(),
+        policy=Policy(),
+        executor=ForgingExecutor(),
+        confirmed_targets=frozenset({"calculator.evaluate"}),
+    )
+    assert outcome.decision is None
+    assert "does not match" in outcome.errors[0]
+
+
+def test_cancellation_is_checked_between_rounds():
+    def provider(_messages, _trusted):
+        return Decision(
+            "juniper-router-decision-v1",
+            "wait",
+            "error",
+            None,
+            None,
+            None,
+            "transient_failure",
+            "medium",
+        )
+
+    outcome = HostOrchestrator().run(
+        provider,
+        user_text="wait",
+        registry=default_registry(),
+        policy=Policy(),
+        executor=MockExecutor(),
+        cancelled=lambda: True,
+    )
+    assert outcome.decision is None
+    assert outcome.errors == ["request cancelled"]

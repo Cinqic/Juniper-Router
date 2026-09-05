@@ -1,0 +1,15 @@
+{
+  "dataset_examples": 2100,
+  "dataset_path": "data/generated/juniper-router-dataset-v2.jsonl",
+  "dataset_sha256": "327804dc57e6beeea039712f46e9468055e2510f558c2c0e3de3a961f16452cf",
+  "dataset_version": "juniper-router-dataset-v2",
+  "eval_path": "evals/frozen/router-eval-v2.jsonl",
+  "eval_sha256": "ff9ba61364b256f69451dd0ddbc07b4ee536dc443afac26b1d9ca6bb1a677130",
+  "examples": 350,
+  "manifest_version": "juniper-router-eval-manifest-v2",
+  "policy": "configs/evaluation/formal-policy-v2.json",
+  "renderer_version": "chatml-router-compact-v1",
+  "review_status": "generated-stratified-reviewed; independent review pending",
+  "split": "test",
+  "status": "frozen"
+}

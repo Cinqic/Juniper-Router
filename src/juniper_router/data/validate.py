@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
@@ -11,12 +12,15 @@ from typing import Any, Iterable
 from juniper_router.contracts.models import Decision, Registry
 
 
-def validate_records(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
+def validate_records(
+    records: Iterable[dict[str, Any]], *, strict_duplicates: bool = False
+) -> dict[str, Any]:
     rows = list(records)
     errors: list[str] = []
     ids: set[str] = set()
     hashes: set[str] = set()
     lineages: dict[str, str] = {}
+    normalized_inputs: set[str] = set()
     decisions = Counter()
     for index, row in enumerate(rows):
         prefix = f"row {index}"
@@ -47,6 +51,16 @@ def validate_records(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
         if row["content_sha256"] in hashes:
             errors.append(f"{prefix}: duplicate content hash")
         hashes.add(row["content_sha256"])
+        user_messages = [
+            item.get("content")
+            for item in row.get("messages", [])
+            if isinstance(item, dict) and item.get("role") == "user"
+        ]
+        if strict_duplicates and user_messages:
+            normalized = re.sub(r"\s+", " ", str(user_messages[-1]).strip().lower())
+            if normalized in normalized_inputs:
+                errors.append(f"{prefix}: duplicate normalized user input")
+            normalized_inputs.add(normalized)
         try:
             Registry.from_dict(row["registry"])
             decision = Decision.from_dict(row["expected_decision"])
@@ -65,7 +79,11 @@ def validate_records(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
         if prior is not None and prior != row["split"]:
             errors.append(f"{prefix}: lineage crosses splits")
         lineages[row["lineage_id"]] = row["split"]
-        if row["review_status"] not in {"primary-engineer-reviewed", "independent-reviewed"}:
+        if row["review_status"] not in {
+            "primary-engineer-reviewed",
+            "independent-reviewed",
+            "generated-stratified-reviewed",
+        }:
             errors.append(f"{prefix}: record is not reviewed")
     return {
         "valid": not errors,

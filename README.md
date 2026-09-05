@@ -39,12 +39,14 @@ network, or arbitrary-code tool is exposed by the reference runtime.
 
 ## Optional model path
 
-Install the model environment from `requirements-model.in`, acquire the pinned
-safe-format base with `py -3.12 scripts/acquire_base.py --output <cache>`, then
-run the bounded SFT entry point in `scripts/train.py`. Acquisition records
-SHA-256 hashes in a local manifest and stores weights outside Git. Training is
-an experiment, not evidence of capability; evaluate against the frozen suites
-and preserve failures before calling anything a candidate.
+Install the model environment from `requirements-model.lock` (the `.in` file is
+the reviewed intent), acquire the pinned safe-format base with `py -3.12
+scripts/acquire_base.py --output <cache>`, then run the bounded SFT entry point
+in `scripts/train.py`. Acquisition records SHA-256 hashes in a local manifest
+and stores weights outside Git. Training is an experiment, not evidence of
+capability; evaluate against the frozen suites and preserve failures before
+calling anything a candidate. LoRA is supported through the pinned PEFT
+dependency; the compact router prompt is a distinct measured renderer mode.
 
 ## Design and evidence
 

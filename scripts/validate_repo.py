@@ -94,6 +94,25 @@ def check_frozen_eval() -> None:
         raise AssertionError("frozen evaluation file and manifest disagree")
 
 
+def check_formal_eval() -> None:
+    path = ROOT / "evals" / "frozen" / "router-eval-v2.jsonl"
+    manifest_path = ROOT / "evals" / "manifests" / "formal-v2.json"
+    policy_path = ROOT / "configs" / "evaluation" / "formal-policy-v2.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    if not path.exists() or manifest["eval_sha256"] != sha256_file(path):
+        raise AssertionError("formal v2 evaluation file and manifest disagree")
+    if (
+        manifest["examples"] < 300
+        or manifest["policy"] != "configs/evaluation/formal-policy-v2.json"
+    ):
+        raise AssertionError("formal v2 manifest is incomplete")
+    if policy["status"] != "frozen-before-formal-candidate-evaluation":
+        raise AssertionError("formal v2 policy is not frozen")
+    if policy["hard_gates"]["constrained_syntactic_validity"] != 1.0:
+        raise AssertionError("constrained validity gate was weakened")
+
+
 def check_experiment_registry() -> None:
     path = ROOT / "experiments" / "registry.jsonl"
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
@@ -129,6 +148,7 @@ def main() -> int:
         check_data()
         check_base_manifest()
         check_frozen_eval()
+        check_formal_eval()
         check_experiment_registry()
         if not compileall.compile_dir(str(ROOT / "src"), quiet=1):
             raise RuntimeError("Python compilation failed")

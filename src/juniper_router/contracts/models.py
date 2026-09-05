@@ -252,8 +252,10 @@ class TrustedResult:
         )
         _string(self.result_id, "result_id")
         _string(self.target_id, "target_id")
+        _require(isinstance(self.success, bool), "trusted result success must be boolean")
         _require(self.host_authored is True, "trusted results must be host-authored")
         _require(isinstance(self.payload, dict), "trusted result payload must be an object")
+        _require(self.provenance == "host", "trusted result provenance must be host")
 
     def to_dict(self) -> dict[str, Any]:
         return {

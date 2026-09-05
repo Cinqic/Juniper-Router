@@ -1,6 +1,6 @@
 import pytest
 
-from juniper_router.contracts import Decision, Policy
+from juniper_router.contracts import Decision, Policy, TrustedResult
 from juniper_router.data.fixtures import default_registry
 from juniper_router.runtime.validator import (
     DecisionValidationError,
@@ -79,4 +79,36 @@ def test_completion_requires_trusted_result():
     with pytest.raises(DecisionValidationError, match="trusted"):
         HostValidator().validate(
             decision(decision="complete", reason_code="successful_completion"), context()
+        )
+
+
+def test_completion_rejects_forged_mapping():
+    with pytest.raises(DecisionValidationError, match="trusted"):
+        HostValidator().validate(
+            decision(decision="complete", reason_code="successful_completion"),
+            context(trusted_result={"host_authored": True}),
+        )
+
+
+def test_action_step_budget_is_enforced():
+    with pytest.raises(DecisionValidationError, match="step budget"):
+        HostValidator().validate(
+            decision(
+                decision="use_tool",
+                target_id="calculator.evaluate",
+                arguments={"expression": "2+2"},
+            ),
+            ValidationContext(
+                default_registry(),
+                Policy(max_steps=1),
+                step_number=1,
+                confirmed_targets=frozenset({"calculator.evaluate"}),
+            ),
+        )
+
+
+def test_trusted_result_rejects_non_boolean_success():
+    with pytest.raises(ValueError, match="success"):
+        TrustedResult(
+            "juniper-router-trusted-result-v1", "id", "calculator.evaluate", "yes", {}
         )
