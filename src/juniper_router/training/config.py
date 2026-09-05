@@ -11,6 +11,7 @@ class SFTConfig:
     output_dir: Path
     method: str = "full"
     prompt_mode: str = "full"
+    target_serialization: str = "ordered-v1"
     sequence_length: int = 512
     learning_rate: float = 2e-5
     batch_size: int = 1
@@ -30,6 +31,8 @@ class SFTConfig:
             raise ValueError("method must be full or lora")
         if self.prompt_mode not in {"full", "compact"}:
             raise ValueError("prompt_mode must be full or compact")
+        if self.target_serialization not in {"ordered-v1", "sorted-keys-v1"}:
+            raise ValueError("target_serialization must be ordered-v1 or sorted-keys-v1")
         if self.sequence_length not in {512, 1024, 2048, 8192}:
             raise ValueError("sequence_length must be a declared experiment value")
         if (

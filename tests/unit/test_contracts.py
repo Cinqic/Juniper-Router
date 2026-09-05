@@ -79,3 +79,13 @@ def test_metrics_count_required_targets_when_predictions_are_invalid():
     metrics = evaluate_predictions([row])
     assert metrics["invalid_predictions"] == 1
     assert metrics["target_accuracy_when_required"] == 0.0
+
+
+def test_ordered_training_target_leads_with_decision_field():
+    from juniper_router.training.sft import _serialize_target
+
+    target = valid_decision(decision="use_tool", target_id="calculator.evaluate")
+    assert _serialize_target(target, "ordered-v1").startswith(
+        '{"schema_version":"juniper-router-decision-v1","decision":"use_tool"'
+    )
+    assert _serialize_target(target, "sorted-keys-v1").startswith('{"arguments":null,"confidence"')

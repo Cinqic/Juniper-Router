@@ -18,6 +18,9 @@ def main() -> int:
     parser.add_argument("--method", choices=("full", "lora"), default="full")
     parser.add_argument("--prompt-mode", choices=("full", "compact"), default="full")
     parser.add_argument(
+        "--target-serialization", choices=("ordered-v1", "sorted-keys-v1"), default="ordered-v1"
+    )
+    parser.add_argument(
         "--train", type=Path, default=Path("data/generated/juniper-router-dataset-v1.jsonl")
     )
     parser.add_argument("--output", type=Path, required=True)
@@ -43,6 +46,7 @@ def main() -> int:
             output_dir=args.output,
             method=args.method,
             prompt_mode=args.prompt_mode,
+            target_serialization=args.target_serialization,
             sequence_length=args.sequence_length,
             learning_rate=args.learning_rate,
             batch_size=args.batch_size,

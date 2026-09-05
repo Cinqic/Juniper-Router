@@ -4,6 +4,7 @@
   "dataset": "data/generated/juniper-router-dataset-v2.jsonl",
   "dataset_version": "juniper-router-dataset-v2",
   "renderer": "chatml-router-compact-v1",
+  "target_serialization": "ordered-v1",
   "sequence_length": 512,
   "learning_rate": 0.0002,
   "batch_size": 1,

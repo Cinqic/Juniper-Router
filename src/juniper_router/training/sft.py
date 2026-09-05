@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from juniper_router.contracts import Decision
 from juniper_router.data.validate import load_jsonl
 from juniper_router.rendering.chatml import render_router_prompt
 
@@ -61,6 +62,11 @@ def run_sft(config: SFTConfig, *, resume: Path | None = None) -> dict[str, Any]:
             raise ValueError("unsupported checkpoint schema")
         if checkpoint.get("config", {}).get("train_path") != str(config.train_path):
             raise ValueError("checkpoint training data does not match requested resume")
+        checkpoint_serialization = checkpoint.get("config", {}).get(
+            "target_serialization", "sorted-keys-v1"
+        )
+        if checkpoint_serialization != config.target_serialization:
+            raise ValueError("checkpoint target serialization does not match requested resume")
         model.load_state_dict(checkpoint["model"])
         optimizer.load_state_dict(checkpoint["optimizer"])
         start_step = int(checkpoint["step"])
@@ -94,7 +100,7 @@ def run_sft(config: SFTConfig, *, resume: Path | None = None) -> dict[str, Any]:
             ]
             texts = [
                 prompt
-                + json.dumps(record["expected_decision"], sort_keys=True, separators=(",", ":"))
+                + _serialize_target(record["expected_decision"], config.target_serialization)
                 + "<|im_end|>\n"
                 for prompt, record in zip(prompts, batch)
             ]
@@ -149,6 +155,7 @@ def run_sft(config: SFTConfig, *, resume: Path | None = None) -> dict[str, Any]:
                 load_jsonl(config.eval_path)[: config.eval_limit],
                 config.sequence_length,
                 config.prompt_mode,
+                config.target_serialization,
             )
         with log_path.open("a", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(event, sort_keys=True) + "\n")
@@ -166,6 +173,7 @@ def run_sft(config: SFTConfig, *, resume: Path | None = None) -> dict[str, Any]:
         "tokens_seen": tokens_seen,
         "method": config.method,
         "prompt_mode": config.prompt_mode,
+        "target_serialization": config.target_serialization,
         "trainable_parameters": trainable_parameters,
     }
 
@@ -176,6 +184,7 @@ def _validation_loss(
     records: list[dict[str, Any]],
     sequence_length: int,
     prompt_mode: str,
+    target_serialization: str,
 ) -> float:
     import torch
 
@@ -194,9 +203,7 @@ def _validation_loss(
                 trusted_result=record["policy"].get("trusted_result"),
                 compact=prompt_mode == "compact",
             )
-            target = json.dumps(
-                record["expected_decision"], sort_keys=True, separators=(",", ":")
-            )
+            target = _serialize_target(record["expected_decision"], target_serialization)
             encoded = tokenizer(
                 prompt + target + "<|im_end|>\n",
                 return_tensors="pt",
@@ -241,6 +248,7 @@ def _save_checkpoint(path: Path, model: Any, optimizer: Any, step: int, config: 
             "train_path": str(config.train_path),
             "method": config.method,
             "prompt_mode": config.prompt_mode,
+            "target_serialization": config.target_serialization,
             "sequence_length": config.sequence_length,
             "learning_rate": config.learning_rate,
             "seed": config.seed,
@@ -257,3 +265,10 @@ def _save_checkpoint(path: Path, model: Any, optimizer: Any, step: int, config: 
     path.with_suffix(path.suffix + ".sha256").write_text(
         digest + "  " + path.name + "\n", encoding="utf-8"
     )
+
+
+def _serialize_target(decision: dict[str, Any], serialization: str) -> str:
+    parsed = Decision.from_dict(decision).to_dict()
+    if serialization == "sorted-keys-v1":
+        return json.dumps(parsed, sort_keys=True, separators=(",", ":"))
+    return json.dumps(parsed, separators=(",", ":"))
