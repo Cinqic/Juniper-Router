@@ -24,11 +24,13 @@ hashes in [manifests/base-model.json](manifests/base-model.json).
 
 The checked-in seed generator remains preserved as historical v1 evidence. The
 formal v2 generator produces 2,100 deterministic records and a frozen,
-balanced 350-case test suite with 12 decision classes. A 30-step LoRA pilot on
-native Windows CPU completed and was evaluated against all 350 cases; it
-produced 0/350 valid decisions and therefore fails every capability gate.
-This is a negative capability result, not a release candidate. See the
-recorded evidence in [docs/evidence/baselines.md](docs/evidence/baselines.md),
+balanced 350-case test suite with 12 decision classes. A 30-step LoRA pilot and
+a 90-step ordered-target continuation ran on native Windows CPU. The
+continuation produced 118/350 syntactically valid decisions, 30/350 semantic
+validator passes, 0.2086 decision accuracy, 0.1992 macro-F1, and 0.20 critical
+escalation recall. These results fail the v2 gates and are a measured negative
+capability result, not a release candidate. See the recorded evidence in
+[docs/evidence/baselines.md](docs/evidence/baselines.md),
 [docs/evidence/sft-smoke.md](docs/evidence/sft-smoke.md), and
 [docs/evidence/formal-v2-pilot.md](docs/evidence/formal-v2-pilot.md).
 

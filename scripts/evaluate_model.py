@@ -123,11 +123,11 @@ def main() -> int:
                         prediction = None
                 output = {
                     "example_id": row["example_id"],
-                "expected_decision": row["expected_decision"],
-                "registry": row["registry"],
-                "policy": row["policy"],
-                "risk_tags": row.get("risk_tags", []),
-                "prediction": prediction,
+                    "expected_decision": row["expected_decision"],
+                    "registry": row["registry"],
+                    "policy": row["policy"],
+                    "risk_tags": row.get("risk_tags", []),
+                    "prediction": prediction,
                     "raw_output": raw,
                 }
                 predictions.append(output)
