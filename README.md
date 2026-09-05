@@ -62,6 +62,7 @@ The normal user path is local-first and CPU-capable. CUDA, DirectML, Vulkan,
 and llama.cpp are optional lanes and are advertised only when tested.
 
 The checked-in `scripts/export_gguf.py` is the reproducible GGUF handoff path;
-it requires a separately built llama.cpp converter and quantizer. This machine
-did not have that toolchain at the time of this candidate, so no GGUF artifact
-or acceleration claim is made.
+it requires a separately built llama.cpp converter and quantizer. The pinned
+base has a tested CPU-only Q4_K_M export recorded in
+`docs/evidence/gguf-toolchain.md`; this is not a router-capability or hardware
+acceleration claim.

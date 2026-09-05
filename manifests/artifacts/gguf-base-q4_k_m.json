@@ -1,0 +1,21 @@
+{
+  "manifest_version": "juniper-router-gguf-manifest-v1",
+  "status": "tested",
+  "artifact_location": "external project-specific artifact root; not committed",
+  "base_model": "HuggingFaceTB/SmolLM2-135M@93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "quantization": "Q4_K_M",
+  "toolchain": "llama.cpp",
+  "toolchain_revision": "6a1a922d269908a29cbd4b49c27e6a8e7fd10fae",
+  "files": [
+    {
+      "path": "smollm2-135m-q4_k_m.gguf",
+      "bytes": 105453568,
+      "sha256": "c7ace3f87bf36de0397c605cedefba5ebe4cd35a691f1ecd0ba7166a77cad599"
+    }
+  ],
+  "notes": [
+    "Built on native Windows with Clang 21.1.0 supplied by Zig 0.16.0.",
+    "GGML_NATIVE=OFF; OpenMP unavailable; no Vulkan or GPU result claimed.",
+    "llama.cpp reported fallback quantization for 180 of 272 tensors."
+  ]
+}

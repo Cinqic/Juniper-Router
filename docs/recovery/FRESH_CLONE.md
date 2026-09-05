@@ -5,11 +5,11 @@
 2. Clone `https://github.com/Cinqic/Juniper-Router.git` and check out the
    candidate commit being reviewed.
 3. Create a venv: `py -3.12 -m venv .venv`.
-4. Install `requirements-dev.lock` and the package (the `.in` file records
-   reviewed dependency intent) and the
-   package. On paths containing literal `{`/`}`, setuptools may fail its
-   editable-install expansion; use `$env:PYTHONPATH="$PWD\src"` for validation
-   and record the path finding rather than changing the code to match one host.
+4. Install the exact `requirements-dev.lock` (the `.in` file records reviewed
+   dependency intent). An editable package install is optional for validation;
+   on paths containing literal `{`/`}`, setuptools may fail its expansion. Use
+   `$env:PYTHONPATH="$PWD\src"` for validation and record the path finding
+   rather than changing the code to match one host.
 5. Run `$env:PYTHONPATH="$PWD\src"; py -3.12 scripts/validate_repo.py --all`.
 6. Run `py -3.12 scripts/build_data.py` to reconstruct the local generated
    dataset. Do not commit model caches or generated training checkpoints.

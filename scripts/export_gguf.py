@@ -29,10 +29,19 @@ def _find_converter(llama_cpp: Path) -> Path:
 
 
 def _find_quantizer(llama_cpp: Path) -> Path:
-    candidates = (
+    candidates = [
         llama_cpp / "build" / "bin" / "Release" / "llama-quantize.exe",
         llama_cpp / "build" / "bin" / "llama-quantize.exe",
         llama_cpp / "llama-quantize.exe",
+    ]
+    candidates.extend(
+        path
+        for build_dir in sorted(llama_cpp.glob("build*"))
+        if build_dir.is_dir()
+        for path in (
+            build_dir / "bin" / "Release" / "llama-quantize.exe",
+            build_dir / "bin" / "llama-quantize.exe",
+        )
     )
     for candidate in candidates:
         if candidate.is_file():
@@ -80,12 +89,16 @@ def main() -> int:
     subprocess.run(convert_command, cwd=args.llama_cpp, check=True)
     quantize_command = [str(quantizer), str(f16_path), str(args.output), args.quant_type]
     subprocess.run(quantize_command, cwd=args.llama_cpp, check=True)
+    toolchain_revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=args.llama_cpp, text=True
+    ).strip()
     artifact = {
         "manifest_version": "juniper-router-gguf-manifest-v1",
         "status": "tested",
         "base_model": f"{model_manifest['model_id']}@{model_manifest['revision']}",
         "quantization": args.quant_type,
         "toolchain": "llama.cpp",
+        "toolchain_revision": toolchain_revision,
         "files": [
             {
                 "path": args.output.name,
