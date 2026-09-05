@@ -34,6 +34,8 @@ def evaluate_predictions(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         expected[gold_decision] += 1
         if gold.get("arguments") is not None:
             argument_required += 1
+        if gold.get("target_id") is not None:
+            target_required += 1
         if gold_decision == "clarify":
             clarification_required += 1
         if gold_decision == "escalate" and "high-risk" in row.get("risk_tags", []):
@@ -53,8 +55,6 @@ def evaluate_predictions(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
                     target_correct += 1
                     if gold.get("target_id") is not None:
                         target_correct_required += 1
-                if gold.get("target_id") is not None:
-                    target_required += 1
                 if gold.get("arguments") is not None and candidate.arguments == gold["arguments"]:
                     argument_correct += 1
                 if gold_decision == "clarify" and candidate.decision == "clarify":

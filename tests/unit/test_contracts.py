@@ -57,3 +57,25 @@ def test_compact_router_prompt_preserves_dynamic_registry_and_policy():
     assert "calculator.evaluate" in prompt
     assert "max_steps" in prompt
     assert "<|im_start|>assistant\n" in prompt
+
+
+def test_metrics_count_required_targets_when_predictions_are_invalid():
+    from juniper_router.evaluation.metrics import evaluate_predictions
+
+    row = {
+        "expected_decision": valid_decision(
+            decision="use_tool",
+            status="ok",
+            target_id="calculator.evaluate",
+            arguments={"expression": "2+2"},
+            message=None,
+            reason_code="deterministic_tool_more_accurate",
+        ),
+        "prediction": None,
+        "registry": {"schema_version": "juniper-router-registry-v1", "targets": []},
+        "policy": {"max_rounds": 1, "max_steps": 1, "max_retries": 0},
+    }
+
+    metrics = evaluate_predictions([row])
+    assert metrics["invalid_predictions"] == 1
+    assert metrics["target_accuracy_when_required"] == 0.0
